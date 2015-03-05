@@ -42,7 +42,7 @@ ruby_block "Calculate passenger root and ruby. May have changed from initial che
 end
 
 execute 'install passenger gem dependencies' do
-  command 'cd #{node['nginx']['passenger']['root']} && bundle'
+  command "cd #{node['nginx']['passenger']['root']} && bundle"
   action :run
 end
 
