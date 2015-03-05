@@ -34,13 +34,6 @@ gem_package 'passenger' do
   gem_binary node['nginx']['passenger']['gem_binary'] if node['nginx']['passenger']['gem_binary']
 end
 
-ruby_block "Calculate passenger root and ruby. May have changed from initial chef load." do
-  block do
-    node.set['nginx']['passenger']['root'] = `passenger-config --root`.chomp
-    node.set['nginx']['passenger']['ruby'] = `which ruby`.chomp
-  end
-end
-
 execute 'install passenger gem dependencies' do
   command "cd #{node['nginx']['passenger']['root']} && bundle"
   action :run
