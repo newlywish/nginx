@@ -28,8 +28,6 @@ unless packages.empty?
   end
 end
 
-gem_package 'rake'
-
 gem_package 'passenger' do
   action     :install
   version    node['nginx']['passenger']['version']
@@ -41,6 +39,11 @@ ruby_block "Calculate passenger root and ruby. May have changed from initial che
     node.set['nginx']['passenger']['root'] = `passenger-config --root`.chomp
     node.set['nginx']['passenger']['ruby'] = `which ruby`.chomp
   end
+end
+
+execute 'install passenger gem dependencies' do
+  command 'cd #{node['nginx']['passenger']['root']} && bundle'
+  action :run
 end
 
 template "#{node['nginx']['dir']}/conf.d/passenger.conf" do
