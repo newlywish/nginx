@@ -96,6 +96,16 @@ end
 
 configure_flags       = node.run_state['nginx_configure_flags']
 nginx_force_recompile = node.run_state['nginx_force_recompile']
+enable_swap = node.run_state['nginx_temp_swap']
+
+
+execute "enable temporary swap" do
+  command "dd if=/dev/zero of=/swap bs=1M count=1024 && mkswap /swap && swapon /swap"
+  action :run
+  only_if do
+    enable_swap
+  end
+end
 
 bash 'compile_nginx_source' do
   cwd  ::File.dirname(src_filepath)
@@ -114,6 +124,14 @@ bash 'compile_nginx_source' do
 
   notifies :restart, 'service[nginx]'
   notifies :reload,  'ohai[reload_nginx]', :immediately
+end
+
+execute "disable temporary swap" do
+  command "swapoff /swap"
+  action :run
+  only_if do
+    enable_swap
+  end
 end
 
 case node['nginx']['init_style']
@@ -202,4 +220,5 @@ else
 end
 
 node.run_state.delete('nginx_configure_flags')
+node.run_state.delete('nginx_temp_swap')
 node.run_state.delete('nginx_force_recompile')
