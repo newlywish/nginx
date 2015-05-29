@@ -34,10 +34,10 @@ gem_package 'passenger' do
   gem_binary node['nginx']['passenger']['gem_binary'] if node['nginx']['passenger']['gem_binary']
 end
 
-execute 'install passenger gem dependencies' do
-  command "cd #{node['nginx']['passenger']['root']} && bundle"
-  action :run
-end
+# execute 'install passenger gem dependencies' do
+#   command "cd #{node['nginx']['passenger']['root']} && bundle"
+#   action :run
+# end
 
 template "#{node['nginx']['dir']}/conf.d/passenger.conf" do
   source 'modules/passenger.conf.erb'
